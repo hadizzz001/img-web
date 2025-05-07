@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useEffect, Suspense } from 'react';
 
-export default function RedirectPage() {
+function MetaAndRedirect() {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
   const imgg = searchParams.get('imgg');
@@ -17,11 +17,11 @@ export default function RedirectPage() {
   }, [id, imgg]);
 
   if (!id || !imgg) {
-    return <p>Missing required parameters.</p>;
+    return <p>Missing parameters.</p>;
   }
 
   return (
-    <html>
+    <>
       <head>
         <title>Check this out!</title>
         <meta property="og:title" content="Check this out!" />
@@ -32,6 +32,14 @@ export default function RedirectPage() {
       <body>
         <p>Redirecting to <a href={redirectUrl}>{redirectUrl}</a>...</p>
       </body>
-    </html>
+    </>
+  );
+}
+
+export default function RedirectPage() {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <MetaAndRedirect />
+    </Suspense>
   );
 }
