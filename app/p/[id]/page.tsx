@@ -6,6 +6,9 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 
   const product = data.find((item: any) => item._id === params.id);
 
+ 
+  
+
   if (!product) return { title: 'Product not found' };
 
   return {
