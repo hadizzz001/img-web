@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     title: 'Check this out!',
     openGraph: {
       title: product.title || 'Check this out!',
-      images: [product.image],
+      images: [product.img[0]],
       type: 'website',
       url: `https://re.abbasbaba.com/p/${params.id}`,
     },
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 
 export default async function ProductRedirect({ params }: { params: { id: string } }) {
   const product = await fetch(`https://abbasbaba.com/api/products/${params.id}`).then(res => res.json());
-  const redirectTo = `https://abbasbaba.com/product?id=${params.id}&imgg=${encodeURIComponent(product.image)}`;
+  const redirectTo = `https://abbasbaba.com/product?id=${params.id}&imgg=${encodeURIComponent(product.img[0])}`;
 
   redirect(redirectTo); // Redirect users immediately (but bots still read OG tags)
 }
