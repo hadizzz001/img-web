@@ -43,7 +43,7 @@ export default async function RedirectPage({ searchParams }: { searchParams: { i
   }
 
   const firstImage = product.img?.[0] || '';
-  const redirectUrl = `https://abbasbaba.com/product?id=${id}&imgg=${encodeURIComponent(firstImage)}`;
+  const redirectUrl = `https://abbasbaba.com/product?id=${id}&&imgg=${encodeURIComponent(product.img[0])}`;
 
   // Inject OG meta tags for bots
   return (
@@ -51,7 +51,7 @@ export default async function RedirectPage({ searchParams }: { searchParams: { i
       <head>
         <title>{product.title || 'Check this out!'}</title>
         <meta property="og:title" content={product.title || 'Check this out!'} />
-        <meta property="og:image" content={firstImage} />
+        <meta property="og:image" content={product.img[0]} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://re.abbasbaba.com/redirect?id=${id}`} />
         <meta name="robots" content="index, follow" />
