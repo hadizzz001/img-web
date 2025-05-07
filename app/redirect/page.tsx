@@ -1,45 +1,65 @@
-'use client';
+import { redirect } from 'next/navigation';
 
-import { useSearchParams } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+export const dynamic = 'force-dynamic'; // Important: ensure it renders fresh each time (for bots)
 
-function MetaAndRedirect() {
-  const searchParams = useSearchParams();
-  const id = searchParams.get('id');
-  const imgg = searchParams.get('imgg');
+async function getProductById(id: string) {
+  const res = await fetch(`https://abbasbaba.com/api/products/${id}`, {
+    cache: 'no-store', // Make sure it doesn't cache if you're updating often
+  });
 
-  const redirectUrl = `https://abbasbaba.com/product?id=${id}&imgg=${encodeURIComponent(imgg || '')}`;
+  const data = await res.json();
+  return Array.isArray(data) ? data[0] : data;
+}
 
-  useEffect(() => {
-    if (id && imgg) {
-      window.location.href = redirectUrl;
-    }
-  }, [id, imgg]);
+export default async function RedirectPage({ searchParams }: { searchParams: { id?: string } }) {
+  const { id } = searchParams;
 
-  if (!id || !imgg) {
-    return <p>Missing parameters.</p>;
+  if (!id) {
+    return (
+      <html>
+        <head>
+          <title>Missing ID</title>
+        </head>
+        <body>
+          <p>Error: Missing product ID in URL.</p>
+        </body>
+      </html>
+    );
   }
 
+  const product = await getProductById(id);
+
+  if (!product) {
+    return (
+      <html>
+        <head>
+          <title>Product Not Found</title>
+        </head>
+        <body>
+          <p>Error: Product not found.</p>
+        </body>
+      </html>
+    );
+  }
+
+  const firstImage = product.img?.[0] || '';
+  const redirectUrl = `https://abbasbaba.com/product?id=${id}&imgg=${encodeURIComponent(firstImage)}`;
+
+  // Inject OG meta tags for bots
   return (
-    <>
+    <html>
       <head>
-        <title>Check this out!</title>
-        <meta property="og:title" content="Check this out!" />
-        <meta property="og:image" content={imgg} />
+        <title>{product.title || 'Check this out!'}</title>
+        <meta property="og:title" content={product.title || 'Check this out!'} />
+        <meta property="og:image" content={firstImage} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://re.abbasbaba.com/redirect?id=${id}&imgg=${encodeURIComponent(imgg)}`} />
+        <meta property="og:url" content={`https://re.abbasbaba.com/redirect?id=${id}`} />
+        <meta name="robots" content="index, follow" />
+        <meta httpEquiv="refresh" content={`0;url=${redirectUrl}`} />
       </head>
       <body>
         <p>Redirecting to <a href={redirectUrl}>{redirectUrl}</a>...</p>
       </body>
-    </>
-  );
-}
-
-export default function RedirectPage() {
-  return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <MetaAndRedirect />
-    </Suspense>
+    </html>
   );
 }
