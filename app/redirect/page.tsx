@@ -1,4 +1,6 @@
 import { redirect } from 'next/navigation';
+import Head from 'next/head'
+
 
 export const dynamic = 'force-dynamic'; // Important: ensure it renders fresh each time (for bots)
 
@@ -48,7 +50,7 @@ export default async function RedirectPage({ searchParams }: { searchParams: { i
   // Inject OG meta tags for bots
   return (
     <html>
-      <head>
+      <Head>
         <title>{product.title || 'Check this out!'}</title>
         <meta property="og:title" content={product.title || 'Check this out!'} />
         <meta property="og:image" content={product.img[0]} />
@@ -56,7 +58,7 @@ export default async function RedirectPage({ searchParams }: { searchParams: { i
         <meta property="og:url" content={`https://re.abbasbaba.com/redirect?id=${id}`} />
         <meta name="robots" content="index, follow" />
         <meta httpEquiv="refresh" content={`0;url=${redirectUrl}`} />
-      </head>
+      </Head>
       <body>
         <p>Redirecting to <a href={redirectUrl}>{redirectUrl}</a>...</p>
       </body>
