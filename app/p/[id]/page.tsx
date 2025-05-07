@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 export default async function ProductRedirect({ params }: { params: { id: string } }) {
-  const product = await fetch(`https://your-api.com/product/${params.id}`).then(res => res.json());
+  const product = await fetch(`https://abbasbaba.com/api/products/${params.id}`).then(res => res.json());
   const redirectTo = `https://abbasbaba.com/product?id=${params.id}&imgg=${encodeURIComponent(product.image)}`;
 
   redirect(redirectTo); // Redirect users immediately (but bots still read OG tags)
